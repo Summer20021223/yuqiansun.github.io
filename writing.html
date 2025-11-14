@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Writing</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <div class="thin-leftbar">
+    <ul id="thinNav"></ul>
+  </div>
+  <aside class="sidebar">
+    <div class="brand">Yuqian Sun</div>
+    <nav>
+      <a href="index.html">GALLERY</a>
+      <a class="active" href="writing.html">WRITING</a>
+      <a href="about.html">ABOUT</a>
+      <a href="assets/resume.html" target="_blank" rel="noopener">RESUME</a>
+    </nav>
+  </aside>
+
+  <!-- 用和 Gallery 一样的 collage 背景壳子 -->
+  <main class="writing-main">
+    <div class="collage writing-bg">
+      <div class="writing-content prose">
+        <header class="page-title">Writing</header>
+        <p>essays, reflections, or exhibition texts.</p>
+
+        <div class="writing-list">
+          <!-- 示例 1：声音设计 -->
+          <a class="writing-item" href="assets/writing/Compiled Music in The Talented Mr. Ripley.html">
+            Tracing Relationships Through Song: Compiled Music in <em>The Talented Mr. Ripley</em>
+          </a>
+
+          <a class="writing-item" href="assets/writing/In-Formation.html">
+            <em>In-Formation</em> Public Interactive Space
+          </a>
+
+          <a class="writing-item" href="assets/writing/Miklós Rózsa’s Film Scores.html">
+            Psychological Turmoil in Sound: <em>Miklós Rózsa</em>’s Film Scores
+          </a>
+
+          <a class="writing-item" href="assets/writing/ML-Based Probability.html">
+            Predict-Then-Bet: ML-Based Probability Forecasting and Fractional Kelly Optimization
+          </a>
+
+          <a class="writing-item" href="assets/writing/Northwest-Blues-.html">
+            TV Script Writing - <em>Northwest Blues</em>
+          </a>
+
+          <a class="writing-item" href="assets/writing/The Role of Tibetan Horn in Kundun.html">
+            The Voice of Tibet: The Role of Tibetan Horn in <em>Kundun</em>
+          </a>
+
+          <!-- 之后你可以自己继续加：
+    <a class="writing-item" href="assets/writing/xxx.html">你的标题</a>
+    -->
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- 只负责生成背景网格的脚本（从 index.html 复制来的那段） -->
+  <script>
+    (function () {
+      const collage = document.querySelector('.collage');
+      if (!collage) return; // 没有 collage 就退出
+
+      const MIN_CELL = 10;
+      const MAX_DEPTH = 10;
+      const STOP_CHANCE = 0.05;
+      const STROKE_WIDTH = 100;
+
+      const svgNS = 'http://www.w3.org/2000/svg';
+      const svg = document.createElementNS(svgNS, 'svg');
+      svg.classList.add('bg-grid');
+      svg.setAttribute('width', '100%');
+      svg.setAttribute('height', '100%');
+      collage.prepend(svg);
+
+      function randBetween(a, b) { return a + Math.random() * (b - a); }
+
+      function addRect(x, y, w, h) {
+        const r = document.createElementNS(svgNS, 'rect');
+        r.setAttribute('x', x.toFixed(1));
+        r.setAttribute('y', y.toFixed(1));
+        r.setAttribute('width', w.toFixed(1));
+        r.setAttribute('height', h.toFixed(1));
+        r.setAttribute('fill', 'transparent');
+
+        const colors = [
+          '#FFFFFF', '#F2F2F2', '#D9D9D9', '#BFBFBF',
+          '#999999', '#666666', '#333333', '#000000'
+        ];
+        const randomColor = colors[Math.floor(Math.random() * colors.length)];
+        r.setAttribute('stroke', randomColor + '06');
+        r.setAttribute('stroke-width', STROKE_WIDTH);
+        svg.appendChild(r);
+      }
+
+      function subdivide(x, y, w, h, depth) {
+        if (w < 2 * MIN_CELL || h < 2 * MIN_CELL || depth >= MAX_DEPTH || Math.random() < STOP_CHANCE) {
+          addRect(x, y, w, h);
+          return;
+        }
+        const vertical = (w > h) ? true : (w < h ? false : Math.random() < 0.5);
+        if (vertical) {
+          const s = randBetween(x + w * 0.35, x + w * 0.65);
+          subdivide(x, y, s - x, h, depth + 1);
+          subdivide(s, y, x + w - s, h, depth + 1);
+        } else {
+          const s = randBetween(y + h * 0.35, y + h * 0.65);
+          subdivide(x, y, w, s - y, depth + 1);
+          subdivide(x, s, w, y + h - s, depth + 1);
+        }
+      }
+
+      function build() {
+        while (svg.firstChild) svg.removeChild(svg.firstChild);
+        const rect = collage.getBoundingClientRect();
+        svg.setAttribute('viewBox', `-200 -200 ${rect.width + 400} ${rect.height + 400}`);
+        subdivide(-200, -200, rect.width + 400, rect.height + 400, 0);
+      }
+
+      function debounce(fn, ms) { let t; return () => { clearTimeout(t); t = setTimeout(fn, ms); }; }
+
+      build();
+      window.addEventListener('resize', debounce(build, 200));
+    })();
+  </script>
+
+
+  <!-- 先加载 script.js -->
+  <script src="script.js"></script>
+
+  <!-- 生成左侧 thin dots 导航 -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const nav = document.getElementById('thinNav');
+      if (!nav || typeof items === 'undefined' || !Array.isArray(items)) return;
+
+      const colorMap = {
+        concept: 'pink',
+        world: 'red',
+        story: 'orange',
+        architectural: 'yellow',
+        interactive: 'green',
+        computation: 'blue',
+        data: 'purple',
+        ai: 'gray'
+      };
+
+      items.forEach((item, idx) => {
+        if (!item.link) return;
+
+        const li = document.createElement('li');
+        const c = item.tags && colorMap[item.tags[0]];
+        if (c) li.classList.add(c);
+
+        const tip = document.createElement('div');
+        tip.className = 'tooltip';
+        tip.textContent = item.caption || `Work ${idx + 1}`;
+        li.appendChild(tip);
+
+        li.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const href = item.link;
+          if (/^https?:\/\//i.test(href)) {
+            window.open(href, '_blank', 'noopener');
+          } else {
+            location.href = href;
+          }
+        });
+
+        nav.appendChild(li);
+      });
+    });
+  </script>
+
+  <!-- 下面保持你原来的脚本：随机 portrait + 彩虹背景 -->
+  <script>
+    (function () {
+      const img = document.getElementById('about-portrait');
+      if (!img) return;
+      const total = 20;
+      const index = Math.floor(Math.random() * total) + 1;
+      const padded = String(index).padStart(2, '0');
+      img.src = `assets/portrait/portrait-${padded}.png`;
+    })();
+  </script>
+
+  <!-- 你的 about 彩虹背景 script 放在这里 -->
+  <script>
+    (function () {
+      const collage = document.querySelector('.about-bg');
+      if (!collage) return;
+      // ... 这里是你之前的 subdivide + addRect 彩虹背景代码 ...
+    })();
+  </script>
+</body>
+
+</html>
+
+</body>
+
+</html>

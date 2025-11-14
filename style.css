@@ -1,0 +1,655 @@
+/* ===== Minimal Default Portfolio ===== */
+
+:root {
+  --base: 2600;
+  --contact-scale: 1.0; /* 这次我们直接用「设计尺寸」 */
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #fff;
+  color: #000;
+}
+
+/* ======================  SIDEBAR  ====================== */
+.sidebar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: calc(200 / var(--base) * 100vw);
+  height: 100vh;
+  padding: calc(24 / var(--base) * 100vw);
+  border-left: calc(5 / var(--base) * 100vw) solid #ccc;
+  background: #f3eeee;
+}
+
+.brand {
+  font-size: calc(28 / var(--base) * 100vw);
+  font-weight: bold;
+  margin-bottom: calc(20 / var(--base) * 100vw);
+}
+
+.sidebar nav {
+  display: flex;
+  flex-direction: column;
+  gap: calc(10 / var(--base) * 100vw);
+}
+
+.sidebar nav a {
+  text-decoration: none;
+  color: #000;
+  border: calc(1 / var(--base) * 100vw) solid #000;
+  padding: calc(8 / var(--base) * 100vw) calc(10 / var(--base) * 100vw);
+  font-size: calc(13 / var(--base) * 100vw);
+  text-align: center;
+}
+
+.sidebar nav a.active {
+  background: #000;
+  color: #fff;
+}
+
+/* ======================  MAIN  ====================== */
+main {
+  padding: calc(40 / var(--base) * 100vw) calc(20 / var(--base) * 100vw);
+  margin-right: calc(220 / var(--base) * 100vw);
+}
+
+.page-title {
+  font-size: calc(26 / var(--base) * 100vw);
+  margin-bottom: calc(20 / var(--base) * 100vw);
+}
+
+/* ======================  COLLAGE & CARDS  ====================== */
+.collage {
+  position: relative;
+  min-height: 100vh;
+}
+
+.card {
+  position: absolute;
+  width: var(--w, 220px);
+  aspect-ratio: 3/4;
+  transform: translate(-50%, -50%) rotate(var(--rot, 0deg)) scale(1.35);
+  left: var(--x);
+  top: var(--y);
+  transition: transform .25s ease, box-shadow .25s ease;
+  touch-action: none;
+  cursor: grab;
+}
+
+.card.dragging {
+  z-index: 1000;
+  transition: none !important;
+  cursor: grabbing;
+}
+
+.card:hover {
+  transform: translate(-50%, -50%) scale(1.5);
+  box-shadow: 0 calc(8 / var(--base) * 100vw) calc(20 / var(--base) * 100vw) rgba(0,0,0,.2);
+  z-index: 999;
+}
+
+.frame {
+  background: #fff;
+  border: calc(1 / var(--base) * 100vw) solid #000;
+  height: 100%;
+  padding: calc(6 / var(--base) * 100vw);
+  display: grid;
+  box-shadow: 0 calc(4 / var(--base) * 100vw) calc(10 / var(--base) * 100vw) rgba(0,0,0,0.36);
+}
+
+.thumb {
+  background-size: cover;
+  background-position: center;
+  border: calc(1 / var(--base) * 100vw) solid #ccc;
+}
+
+.caption {
+  position: absolute;
+  bottom: calc(-10 / var(--base) * 100vw);
+  left: calc(6 / var(--base) * 100vw);
+  font-size: calc(11 / var(--base) * 100vw);
+  background: transparent;
+  padding: calc(2 / var(--base) * 100vw) calc(6 / var(--base) * 100vw);
+  border: calc(1 / var(--base) * 100vw) solid #000;
+  backdrop-filter: blur(calc(4 / var(--base) * 100vw));
+}
+
+/* ======================  PROSE  ====================== */
+
+
+/* ======================  RESPONSIVE  ====================== */
+@media (max-width: 800px) {
+  .sidebar {
+    position: static;
+    width: 100%;
+    height: auto;
+    border-left: none;
+    border-bottom: calc(1 / var(--base) * 100vw) solid #ccc;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  main { margin-right: 0; }
+}
+
+/* ======================  LEGEND  ====================== */
+.legend {
+  margin-top: calc(16 / var(--base) * 100vw);
+  padding-top: calc(12 / var(--base) * 100vw);
+  border-top: calc(1 / var(--base) * 100vw) solid #ccc;
+}
+
+.legend-title {
+  font-weight: bold;
+  font-size: calc(12 / var(--base) * 100vw);
+  margin-bottom: calc(6 / var(--base) * 100vw);
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: calc(8 / var(--base) * 100vw);
+  padding: calc(6 / var(--base) * 100vw);
+  border: calc(1 / var(--base) * 100vw) solid #000;
+  background: #fff;
+  font-size: calc(12 / var(--base) * 100vw);
+  cursor: pointer;
+  text-align: left;
+}
+
+.legend-item + .legend-item { margin-top: calc(6 / var(--base) * 100vw); }
+
+.legend-item.active { background: #000; color: #fff; }
+
+.legend .dot {
+  width: calc(12 / var(--base) * 100vw);
+  height: calc(12 / var(--base) * 100vw);
+  border-radius: 50%;
+  border: calc(1 / var(--base) * 100vw) solid #000;
+}
+
+/* Colors */
+.dot.pink   { background: #ff7fb5; }
+.dot.red    { background: #ff4d4f; }
+.dot.orange { background: #ffa940; }
+.dot.yellow { background: #ffd666; }
+.dot.green  { background: #2f7d57; }
+.dot.blue   { background: #1890ff; }
+.dot.purple { background: #9254de; }
+.dot.gray   { background: #bfbfbf; }
+.dot.all    { background: linear-gradient(90deg, #ff7fb5, #ff4d4f, #ffa940, #ffd666, #2f7d57, #1890ff, #9254de, #bfbfbf); }
+
+/* ======================  TAGS  ====================== */
+.tags {
+  position: absolute;
+  right: calc(6 / var(--base) * 100vw);
+  bottom: calc(6 / var(--base) * 100vw);
+  display: flex;
+  gap: calc(4 / var(--base) * 100vw);
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  width: calc(100% - calc(12 / var(--base) * 100vw));
+}
+
+.tag-dot {
+  width: calc(10 / var(--base) * 100vw);
+  height: calc(10 / var(--base) * 100vw);
+  border-radius: 50%;
+  border: calc(1 / var(--base) * 100vw) solid #000;
+}
+
+/* Colors */
+.tag-dot.pink   { background: #ff7fb5; }
+.tag-dot.red    { background: #ff4d4f; }
+.tag-dot.orange { background: #ffa940; }
+.tag-dot.yellow { background: #ffd666; }
+.tag-dot.green  { background: #2f7d57; }
+.tag-dot.blue   { background: #1890ff; }
+.tag-dot.purple { background: #9254de; }
+.tag-dot.gray   { background: #bfbfbf; }
+
+/* ======================  CARD STATES  ====================== */
+.card.raise .frame { box-shadow: inset 0 0 0 calc(3 / var(--base) * 100vw) #000; }
+.card.lower .frame { box-shadow: inset 0 0 0 calc(1 / var(--base) * 100vw) #000; }
+
+/* 默认：所有卡片清晰 */
+.card {
+  transition: filter .3s ease, opacity .3s ease, transform .25s ease, box-shadow .25s ease;
+  filter: none;
+  opacity: 1;
+}
+
+/* 只有筛选模式开启时，才模糊非选中卡片 */
+body.filter-active .card:not(.raise):not(.dragging) {
+  opacity: 0.92;
+  filter: blur(1px);
+  transition: filter .3s ease, opacity .3s ease;
+}
+
+/* 选中卡片始终清晰 */
+.card.raise {
+  filter: none !important;
+  opacity: 1 !important;
+  z-index: 999;
+}
+
+/* 拖拽中也清晰 */
+.card.dragging {
+  filter: none !important;
+  opacity: 1 !important;
+  z-index: 1000;
+}
+
+/* 筛选模式下模糊非选中卡片 */
+
+
+/* ======================  LEFT RAIL  ====================== */
+.thin-leftbar {
+  position: fixed;
+  top: 50%;
+  left: calc(10 / var(--base) * 100vw);
+  transform: translateY(-50%);
+  width: calc(16 / var(--base) * 100vw);
+  z-index: 120;
+  pointer-events: auto;
+}
+
+.thin-leftbar ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: calc(10 / var(--base) * 100vw);
+}
+
+.thin-leftbar li {
+  width: calc(12 / var(--base) * 100vw);
+  height: calc(12 / var(--base) * 100vw);
+  border: calc(1 / var(--base) * 100vw) solid #000;
+  border-radius: 50%;
+  background: #fff;
+  cursor: pointer;
+  position: relative;
+  transition: background .15s ease, transform .15s ease;
+}
+
+.thin-leftbar li:hover {
+  background: #000;
+  transform: scale(1.05);
+}
+
+.thin-leftbar li .tooltip {
+  position: absolute;
+  left: calc(18 / var(--base) * 100vw);
+  top: 50%;
+  transform: translateY(-50%);
+  background: #000;
+  color: #fff;
+  padding: calc(4 / var(--base) * 100vw) calc(8 / var(--base) * 100vw);
+  font-size: calc(11 / var(--base) * 100vw);
+  line-height: 1;
+  border-radius: calc(4 / var(--base) * 100vw);
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .12s ease;
+}
+
+.thin-leftbar li:hover .tooltip { opacity: 1; }
+
+.thin-leftbar li.pink   { background: #ff7fb5; }
+.thin-leftbar li.red    { background: #ff4d4f; }
+.thin-leftbar li.orange { background: #ffa940; }
+.thin-leftbar li.yellow { background: #ffd666; }
+.thin-leftbar li.green  { background: #2f7d57; }
+.thin-leftbar li.blue   { background: #1890ff; }
+.thin-leftbar li.purple { background: #9254de; }
+.thin-leftbar li.gray   { background: #bfbfbf; }
+
+@media (max-width: 800px) { .thin-leftbar { display: none; } }
+
+/* ======================  BACKGROUND GRID  ====================== */
+.collage svg.bg-grid {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  left: calc(-200 / var(--base) * 100vw);
+  top: calc(-200 / var(--base) * 100vw);
+  width: calc(100% + calc(400 / var(--base) * 100vw));
+  height: calc(100% + calc(400 / var(--base) * 100vw));
+}
+
+/* ======================  ABOUT PAGE  ====================== */
+.about-photos {
+  display: flex;
+  gap: calc(40 / var(--base) * 100vw);
+  margin-bottom: calc(50 / var(--base) * 100vw);
+  margin-left: 10vw;
+}
+
+.about-photo-single {
+  margin-left: 10vw;
+  margin-bottom: calc(50 / var(--base) * 100vw);
+}
+
+.about-photo-frame {
+  width: calc(320 / var(--base) * 100vw);
+  aspect-ratio: 1/1;
+  background: #fff;
+  border: calc(1 / var(--base) * 100vw) solid #000;
+  padding: calc(6 / var(--base) * 100vw);
+  box-shadow: 0 calc(4 / var(--base) * 100vw) calc(10 / var(--base) * 100vw) rgba(0,0,0,0.35);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.about-photo-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border: calc(1 / var(--base) * 100vw) solid #ccc;
+}
+
+.about-layout {
+  display: flex;
+  align-items: stretch;
+  gap: calc(200 / var(--base) * 100vw);
+  margin-top: calc(100 / var(--base) * 100vw);
+  margin-bottom: calc(80 / var(--base) * 100vw);
+  
+  /* 关键：改这里！ */
+  margin-left: calc(50 / var(--base) * 100vw);   /* 原来 20vw → 80px 基准 */
+  
+  margin-right: calc(260 / var(--base) * 100vw);
+  position: relative;
+  z-index: 1;
+}
+
+/* About 页文字 - 物理一致版 */
+.about-text,
+.prose { 
+  max-width: calc(700 / var(--base) * 100vw);
+  margin-left: 15vw;
+  padding-top: calc(20 / var(--base) * 100vw);
+  font-size: calc(16 / var(--base) * 100vw);     /* 主字体 */
+  line-height: 1.7;
+  color: #000;
+}
+
+.about-text h1,
+.prose h1 {
+  font-size: calc(24 / var(--base) * 100vw);
+  margin-bottom: calc(16 / var(--base) * 100vw);
+  font-weight: bold;
+}
+
+.about-text p,
+.prose p {
+  margin-bottom: calc(16 / var(--base) * 100vw);
+  font-size: calc(16 / var(--base) * 100vw);
+}
+
+.about-text strong,
+.prose strong {
+  font-weight: 600;
+}
+
+.contact-card {
+  flex: 0 0 calc(680 / var(--base) * 100vw);   /* 原来 560 → 680，宽敞 */
+  padding: calc(36 / var(--base) * 100vw) calc(44 / var(--base) * 100vw);  /* 36px 44px */
+  border: calc(1.5 / var(--base) * 100vw) solid #000;   /* 边框加粗一点 */
+  background: #f7f1f1;
+  font-size: calc(16 / var(--base) * 100vw);     /* 文字更大 */
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 calc(6 / var(--base) * 100vw) calc(16 / var(--base) * 100vw) rgba(0,0,0,0.2);
+  min-height: calc(420 / var(--base) * 100vw);   /* 保证高度 */
+}
+
+.contact-card h2 {
+  margin: 0 0 calc(16 / var(--base) * 100vw) 0;
+  font-size: calc(18 / var(--base) * 100vw);
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.contact-note {
+  margin-bottom: calc(24 / var(--base) * 100vw);
+  font-size: calc(15 / var(--base) * 100vw);
+  line-height: 1.5;
+  color: #333;
+}
+
+.contact-card form {
+  margin-top: calc(20 / var(--base) * 100vw);
+  display: flex;
+  flex-direction: column;
+  gap: calc(16 / var(--base) * 100vw);
+}
+
+.contact-card label {
+  display: flex;
+  flex-direction: column;
+  font-size: calc(13 / var(--base) * 100vw);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+}
+
+.contact-card input,
+.contact-card textarea {
+  margin-top: calc(6 / var(--base) * 100vw);
+  padding: calc(11 / var(--base) * 100vw) calc(14 / var(--base) * 100vw);
+  border: calc(1.2 / var(--base) * 100vw) solid #000;
+  background: #fff;
+  font-family: inherit;
+  font-size: calc(15 / var(--base) * 100vw);
+  border-radius: 0;
+  transition: border .2s ease;
+}
+
+.contact-card input:focus,
+.contact-card textarea:focus {
+  outline: none;
+  border-color: #000;
+  box-shadow: 0 0 0 calc(2 / var(--base) * 100vw) rgba(0,0,0,0.1);
+}
+
+.contact-card textarea {
+  min-height: calc(100 / var(--base) * 100vw);
+  resize: vertical;
+}
+
+.contact-card button {
+  margin-top: calc(12 / var(--base) * 100vw);
+  padding: calc(14 / var(--base) * 100vw) calc(20 / var(--base) * 100vw);
+  border: calc(1.5 / var(--base) * 100vw) solid #000;
+  background: #000;
+  color: #fff;
+  font-size: calc(14 / var(--base) * 100vw);
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition: all .2s ease;
+  align-self: flex-start;
+}
+
+.contact-card button:hover {
+  background: #fff;
+  color: #000;
+  transform: translateY(calc(-1 / var(--base) * 100vw));
+}
+
+/* ======================  WRITING PAGE  ====================== */
+.writing-main {
+  position: relative;
+  margin-right: calc(220 / var(--base) * 100vw);
+  padding: calc(40 / var(--base) * 100vw) calc(20 / var(--base) * 100vw);
+}
+
+.writing-content {
+  position: relative;
+  z-index: 1;
+  max-width: calc(700 / var(--base) * 100vw);
+  margin-left: 10vw;
+  padding-top: calc(40 / var(--base) * 100vw);
+}
+
+.writing-list {
+  margin-top: calc(60 / var(--base) * 100vw);
+  display: flex;
+  flex-direction: column;
+  gap: calc(24 / var(--base) * 100vw);
+}
+
+.writing-item {
+  display: inline-block;
+  font-size: calc(26 / var(--base) * 100vw);
+  font-weight: 400;
+  text-decoration: none;
+  color: #000;
+  letter-spacing: 0.06em;
+  transition: transform .18s ease, font-size .18s ease, letter-spacing .18s ease, color .18s ease;
+}
+
+.writing-item:hover {
+  font-size: calc(32 / var(--base) * 100vw);
+  letter-spacing: 0.10em;
+  transform: translateX(calc(4 / var(--base) * 100vw));
+}
+
+.project-02 .process-grid figure {
+  border: none !important;
+  background: transparent !important;
+}
+
+/* ✅ Remove process borders ONLY for project 04 */
+body.project-04 .process-grid figure {
+  border: none !important;
+  background: none !important;
+}
+
+/* ✅ Remove process borders ONLY for Project 05 */
+body.project-05 .process-grid figure {
+  border: none !important;
+  background: none !important;
+}
+
+/* ✅ Remove process borders ONLY for Project 05 */
+body.project-06 .process-grid figure {
+  border: none !important;
+  background: none !important;
+}
+
+/* ✅ Remove process borders ONLY for Project 05 */
+body.project-07 .process-grid figure {
+  border: none !important;
+  background: none !important;
+}
+
+/* ✅ Remove process borders ONLY for Project 05 */
+body.project-08 .process-grid figure {
+  border: none !important;
+  background: none !important;
+}
+
+body.project-13 .process-grid figure {
+  border: none !important;
+  background: none !important;
+}
+
+body.project-12 .process-grid figure {
+  border: none !important;
+  background: none !important;
+}
+
+body.project-14 .process-grid figure {
+  border: none !important;
+  background: none !important;
+}
+
+body.project-15 .process-grid figure {
+  border: none !important;
+  background: none !important;
+}
+
+/* ===== 手机端优化：放大关键元素 ===== */
+@media (max-width: 800px) {
+  :root {
+    --base: 1200;   /* 手机用更小的基准 → 放大效果 */
+  }
+
+  /* 文字放大 */
+  .prose,
+  .about-text,
+  .writing-content {
+    font-size: calc(24 / var(--base) * 100vw) !important;
+    line-height: 1.6;
+  }
+
+  .page-title {
+    font-size: calc(36 / var(--base) * 100vw) !important;
+  }
+
+  /* 卡片放大 */
+  .card {
+    --w: 280px;   /* 固定更大尺寸 */
+    transform: translate(-50%, -50%) rotate(var(--rot, 0deg)) scale(1.1);
+  }
+
+  /* Contact 卡片放大 */
+  .contact-card {
+    flex: 0 0 calc(380 / var(--base) * 100vw);
+    padding: calc(32 / var(--base) * 100vw);
+    font-size: calc(18 / var(--base) * 100vw);
+    min-height: auto;
+  }
+
+  /* 导航按钮放大 */
+  .sidebar nav a {
+    font-size: calc(16 / var(--base) * 100vw);
+    padding: calc(12 / var(--base) * 100vw);
+  }
+
+  /* 网格背景淡化（避免干扰） */
+  .collage svg.bg-grid {
+    opacity: 0.3;
+  }
+}
+
+@media (max-width: 800px) {
+  :root { --base: 1200; }
+  .prose { font-size: calc(24 / var(--base) * 100vw) !important; }
+  .page-title { font-size: calc(36 / var(--base) * 100vw) !important; }
+  .card { --w: 280px; transform: translate(-50%, -50%) rotate(var(--rot, 0deg)) scale(1.1); }
+  .contact-card { flex: 0 0 calc(380 / var(--base) * 100vw); padding: calc(32 / var(--base) * 100vw); font-size: calc(18 / var(--base) * 100vw); }
+  .sidebar nav a { font-size: calc(16 / var(--base) * 100vw); padding: calc(12 / var(--base) * 100vw); }
+}
+
+#portrait-overlay {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(255,255,255,0.95); backdrop-filter: blur(4px);
+  display: none; align-items: center; justify-content: center;
+  z-index: 9999; font-family: 'Montserrat', sans-serif;
+  color: #333; text-align: center; transition: opacity .3s ease;
+}
+#portrait-overlay.active { display: flex; }
+.portrait-message svg { width: 48px; height: 48px; margin-bottom: 16px; animation: rotate 2s infinite linear; }
+.portrait-message p { font-size: 1.1rem; font-weight: 500; line-height: 1.5; }
+@keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(90deg); } }
+@media (prefers-color-scheme: dark) {
+  #portrait-overlay { background: rgba(0,0,0,0.92); color: #eee; }
+}

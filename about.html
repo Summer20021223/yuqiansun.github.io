@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>About</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <div class="thin-leftbar">
+    <ul id="thinNav"></ul>
+  </div>
+  <aside class="sidebar">
+    <div class="brand">Yuqian Sun</div>
+    <nav>
+      <a href="index.html">GALLERY</a>
+      <a href="writing.html">WRITING</a>
+      <a class="active" href="about.html">ABOUT</a>
+      <a href="assets/resume.html" target="_blank" rel="noopener">RESUME</a>
+    </nav>
+  </aside>
+
+  <!-- 多了一个 about-layout -->
+  <main class="about-main">
+    <div class="collage about-bg">
+      <!-- 1. 外层布局容器：flex 左右结构 -->
+      <div class="about-layout">
+
+        <!-- 2. 左侧文字区域 -->
+        <div class="prose">
+          <div class="about-photo-single">
+            <div class="about-photo-frame">
+              <img id="about-portrait" src="" alt="Yuqian Sun portrait">
+            </div>
+          </div>
+
+          <header class="page-title">About</header>
+
+          <p>
+            Hi! I’m <strong>Yuqian Sun</strong>, or Summer (born 2002).
+          </p>
+
+          <p>
+            I graduated from Washington University in St. Louis with a Bachelor of Arts in Architecture and a
+            second major in Computer Science and Mathematics. I’m currently pursuing a Master of Science
+            in Fiction and Entertainment at SCI-Arc, supervised by Liam Young.
+          </p>
+
+          <p>
+            My work sits between design, storytelling, and technology. Over the years, I’ve worked across
+            fine art, spatial design, storytelling, data analysis, AI workflows, and interactive systems. I really
+            enjoy learning new tools and building worlds across different media. Lately I’ve been focusing on
+            visual effects, real-time simulation, and game-engine-based workflows, using software like
+            Unreal Engine, Houdini, Maya, and Blender.
+          </p>
+
+          <p>
+            My current interests sit at the intersection of narrative worldbuilding, computational design,
+            digital fabrication, AI, and human–computer interaction (HCI). I’m fascinated by how fictional
+            worlds can reframe spatial practice, and how new technologies can expand the future of
+            representation.
+          </p>
+
+          <p>
+            Thanks for visiting my gallery — hope something here sparks your curiosity.
+            More projects are on the way.
+          </p>
+        </div>
+
+        <!-- 3. 右侧 Contact 卡片 -->
+        <aside class="contact-card">
+          <h2>Contact</h2>
+          <p class="contact-note">
+            Say hi or get in touch about projects and collaborations.
+          </p>
+          <form action="https://formspree.io/f/mgvrvgpw" method="POST">
+            <label>
+              Name
+              <input type="text" name="name" required>
+            </label>
+
+            <label>
+              Email
+              <input type="email" name="_replyto" required>
+            </label>
+
+            <label>
+              Message
+              <textarea name="message" rows="5" required></textarea>
+            </label>
+
+            <button type="submit">Send</button>
+          </form>
+        </aside>
+
+      </div>
+    </div>
+  </main>
+
+  <script>
+    (function () {
+      const img = document.getElementById('about-portrait');
+      if (!img) return;
+
+      const total = 20; // number of portraits you have
+      const index = Math.floor(Math.random() * total) + 1; // 1–20
+      const padded = String(index).padStart(2, '0');       // "01"..."20"
+
+      img.src = `assets/portrait/portrait-${padded}.png`;
+    })();
+  </script>
+
+  <script>
+    (function () {
+      // 只在 About 页的 about-bg 里画背景
+      const collage = document.querySelector('.about-bg');
+      if (!collage) return;
+
+      const MIN_CELL = 10;
+      const MAX_DEPTH = 10;
+      const STOP_CHANCE = 0.05;
+      const STROKE_WIDTH = 100;
+
+      const svgNS = 'http://www.w3.org/2000/svg';
+      const svg = document.createElementNS(svgNS, 'svg');
+      svg.classList.add('bg-grid');
+      svg.setAttribute('width', '100%');
+      svg.setAttribute('height', '100%');
+      collage.prepend(svg);
+
+      function randBetween(a, b) { return a + Math.random() * (b - a); }
+
+      function addRect(x, y, w, h) {
+        const r = document.createElementNS(svgNS, 'rect');
+        r.setAttribute('x', x.toFixed(1));
+        r.setAttribute('y', y.toFixed(1));
+        r.setAttribute('width', w.toFixed(1));
+        r.setAttribute('height', h.toFixed(1));
+        r.setAttribute('fill', 'transparent');
+
+        // 🌈 彩虹色版：用你 legend 同一套颜色
+        const colors = [
+          '#ff7fb5', // concept – pink
+          '#ff4d4f', // world – red
+          '#ffa940', // story – orange
+          '#ffd666', // architectural – yellow
+          '#2f7d57', // interactive – green
+          '#1890ff', // computation – blue
+          '#9254de', // data – purple
+          '#bfbfbf'  // ai – gray
+        ];
+        const randomColor = colors[Math.floor(Math.random() * colors.length)];
+
+        // 8位 hex，最后两位是 alpha（33 ≈ 20% 透明度）
+        r.setAttribute('stroke', randomColor + '05');
+        r.setAttribute('stroke-width', STROKE_WIDTH);
+        svg.appendChild(r);
+      }
+
+      function subdivide(x, y, w, h, depth) {
+        if (w < 2 * MIN_CELL || h < 2 * MIN_CELL ||
+          depth >= MAX_DEPTH || Math.random() < STOP_CHANCE) {
+          addRect(x, y, w, h);
+          return;
+        }
+        const vertical = (w > h) ? true : (w < h ? false : Math.random() < 0.5);
+        if (vertical) {
+          const s = randBetween(x + w * 0.35, x + w * 0.65);
+          subdivide(x, y, s - x, h, depth + 1);
+          subdivide(s, y, x + w - s, h, depth + 1);
+        } else {
+          const s = randBetween(y + h * 0.35, y + h * 0.65);
+          subdivide(x, y, w, s - y, depth + 1);
+          subdivide(x, s, w, y + h - s, depth + 1);
+        }
+      }
+
+      function build() {
+        while (svg.firstChild) svg.removeChild(svg.firstChild);
+        const rect = collage.getBoundingClientRect();
+        svg.setAttribute('viewBox', `-200 -200 ${rect.width + 400} ${rect.height + 400}`);
+        subdivide(-200, -200, rect.width + 400, rect.height + 400, 0);
+      }
+
+      function debounce(fn, ms) { let t; return () => { clearTimeout(t); t = setTimeout(fn, ms); }; }
+
+      build();
+      window.addEventListener('resize', debounce(build, 200));
+    })();
+  </script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,512 @@
+<!doctype html>
+<html lang="en">
+<link rel="preconnect" href="https://fonts.gstatic.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Portfolio</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <div class="thin-leftbar">
+    <ul id="thinNav"></ul>
+  </div>
+
+  <aside class="sidebar">
+    <div class="brand">Yuqian Sun</div>
+    <nav>
+      <a class="active" href="index.html">GALLERY</a>
+      <a href="writing.html">WRITING</a>
+      <a href="about.html">ABOUT</a>
+      <a href="assets/resume.html" target="_blank" rel="noopener">RESUME</a>
+
+
+      <!-- ✅ legend block -->
+      <div class="legend" id="legend">
+        <div class="legend-title">GUIDE</div>
+        <button class="legend-item" data-tag="all">
+          <span class="dot all"></span><span>All</span>
+        </button>
+        <button class="legend-item" data-tag="concept">
+          <span class="dot pink"></span><span>Concept</span>
+        </button>
+        <button class="legend-item" data-tag="world">
+          <span class="dot red"></span><span>World Building</span>
+        </button>
+        <button class="legend-item" data-tag="story">
+          <span class="dot orange"></span><span>Storytelling</span>
+        </button>
+        <button class="legend-item" data-tag="architectural">
+          <span class="dot yellow"></span><span>Architectural</span>
+        </button>
+        <button class="legend-item" data-tag="interactive">
+          <span class="dot green"></span><span>Interactive</span>
+        </button>
+        <button class="legend-item" data-tag="computation">
+          <span class="dot blue"></span><span>Computation</span>
+        </button>
+        <button class="legend-item" data-tag="data">
+          <span class="dot purple"></span><span>Data Analysis</span>
+        </button>
+        <button class="legend-item" data-tag="ai">
+          <span class="dot gray"></span><span>Artificial Intelligence</span>
+        </button>
+      </div>
+      <!-- ✅ end legend -->
+    </nav>
+  </aside>
+
+
+
+  <main>
+    <header class="page-title">Gallery</header>
+    <div id="collage" class="collage"></div>
+  </main>
+
+  <!-- your main script -->
+  <script src="script.js"></script>
+
+  <!-- generate ultra-thin left dots from items -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const nav = document.getElementById('thinNav');
+      // items 来自 script.js；若没加载到，直接退出
+      if (!nav || (typeof items === 'undefined') || !Array.isArray(items)) return;
+
+      const colorMap = {
+        concept: 'pink',
+        world: 'red',
+        story: 'orange',
+        architectural: 'yellow',
+        interactive: 'green',
+        computation: 'blue',
+        data: 'purple',
+        ai: 'gray'
+      };
+
+      items.forEach((item, idx) => {
+        if (!item.link) return;
+
+        const li = document.createElement('li');
+
+        // 用第一个 tag 上色（可选）
+        const c = item.tags && colorMap[item.tags[0]];
+        if (c) li.classList.add(c);
+
+        // tooltip（悬浮显示标题）
+        const tip = document.createElement('div');
+        tip.className = 'tooltip';
+        tip.textContent = item.caption || `Work ${idx + 1}`;
+        li.appendChild(tip);
+
+        // 点击打开链接（不影响拖拽，因为不在 .collage 内）
+        li.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const href = item.link;
+          if (/^https?:\/\//i.test(href)) {
+            window.open(href, '_blank', 'noopener');
+          } else {
+            location.href = href;
+          }
+        });
+
+        nav.appendChild(li);
+      });
+    });
+  </script>
+
+
+  <!-- ✅ minimal drag support (same as before) -->
+  <style>
+    .card {
+      touch-action: none;
+      cursor: grab;
+    }
+
+    .card.dragging {
+      z-index: 3000;
+      cursor: grabbing;
+    }
+
+    .card:hover {
+      z-index: 2000 !important;
+    }
+  </style>
+
+  <script>
+    (function () {
+      const collage = document.querySelector('.collage');
+      if (!collage) return;
+
+      const DRAG_THRESHOLD = 8; // 拖拽触发距离（像素）
+
+      let draggingCard = null;
+      let capturedId = null;
+      let startX = 0, startY = 0;
+      let isDragging = false;
+      let grabDX = 0, grabDY = 0;
+
+      // 标记：是否为拖拽导致的 pointerup（用于阻止 click）
+      let wasDragged = false;
+
+      function getClientXY(e) {
+        return {
+          cx: e.clientX ?? (e.touches?.[0]?.clientX),
+          cy: e.clientY ?? (e.touches?.[0]?.clientY)
+        };
+      }
+
+      function clampToCollage(x, y) {
+        const rect = collage.getBoundingClientRect();
+        const pad = 10;
+        return {
+          x: Math.min(Math.max(x, rect.left + pad), rect.right - pad),
+          y: Math.min(Math.max(y, rect.top + pad), rect.bottom - pad)
+        };
+      }
+
+      // === 1. 开始拖拽 ===
+      collage.addEventListener('pointerdown', (e) => {
+        const card = e.target.closest('.card');
+        if (!card || e.button !== 0 && e.button !== undefined) return;
+
+        draggingCard = card;
+        capturedId = e.pointerId;
+        wasDragged = false;
+
+        const { cx, cy } = getClientXY(e);
+        if (cx == null || cy == null) return;
+
+        startX = cx; startY = cy;
+        const r = card.getBoundingClientRect();
+        const centerX = r.left + r.width / 2;
+        const centerY = r.top + r.height / 2;
+        grabDX = cx - centerX;
+        grabDY = cy - centerY;
+
+        isDragging = false;
+        card.setPointerCapture?.(capturedId);
+      });
+
+      // === 2. 移动中 ===
+      collage.addEventListener('pointermove', (e) => {
+        if (!draggingCard) return;
+        const { cx, cy } = getClientXY(e);
+        if (cx == null || cy == null) return;
+
+        if (!isDragging) {
+          const dx = Math.abs(cx - startX), dy = Math.abs(cy - startY);
+          if (dx < DRAG_THRESHOLD && dy < DRAG_THRESHOLD) return;
+          isDragging = true;
+          wasDragged = true;
+          draggingCard.classList.add('dragging');
+        }
+
+        const targetX = cx - grabDX;
+        const targetY = cy - grabDY;
+        const { x, y } = clampToCollage(targetX, targetY);
+
+        // 用 px 移动（实时）
+        draggingCard.style.setProperty('--x', x + 'px');
+        draggingCard.style.setProperty('--y', y + 'px');
+      });
+
+      // === 3. 结束拖拽 ===
+      function endDrag(e) {
+        if (!draggingCard) return;
+
+        // 保存最终位置（%）
+        const rect = draggingCard.getBoundingClientRect();
+        const collageRect = collage.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        const newX = ((centerX - collageRect.left) / collageRect.width) * 100;
+        const newY = ((centerY - collageRect.top) / collageRect.height) * 100;
+
+        draggingCard.style.setProperty('--x', newX + '%');
+        draggingCard.style.setProperty('--y', newY + '%');
+
+        draggingCard.classList.remove('dragging');
+        draggingCard.releasePointerCapture?.(capturedId);
+        draggingCard = null;
+        capturedId = null;
+        isDragging = false;
+      }
+
+      collage.addEventListener('pointerup', endDrag);
+      collage.addEventListener('pointercancel', endDrag);
+      collage.addEventListener('lostpointercapture', endDrag);
+
+      // === 4. 阻止拖拽后的 click 事件 ===
+      collage.addEventListener('click', (e) => {
+        if (wasDragged) {
+          e.stopImmediatePropagation();
+          wasDragged = false; // 重置
+        }
+      }, true); // useCapture = true，优先拦截
+
+    })();
+  </script>
+
+
+  <!-- ✅ new tag + legend behavior -->
+  <script>
+    (function () {
+      const collage = document.querySelector('.collage');
+      const legend = document.getElementById('legend');
+
+      function setCardTags(card, tags) {
+        card.dataset.tags = tags.join(',');
+        let holder = card.querySelector('.tags');
+        if (!holder) {
+          holder = document.createElement('div');
+          holder.className = 'tags';
+          card.querySelector('.frame').appendChild(holder);
+        } else { holder.innerHTML = ''; }
+        tags.forEach(t => {
+          const span = document.createElement('span');
+          span.className = 'tag-dot ' + ({
+            concept: 'pink',
+            world: 'red',
+            story: 'orange',
+            architectural: 'yellow',
+            interactive: 'green',
+            computation: 'blue',
+            data: 'purple',
+            ai: 'gray'
+          }[t] || 'gray');
+          holder.appendChild(span);
+        });
+      }
+
+      legend?.addEventListener('click', (e) => {
+        const btn = e.target.closest('.legend-item');
+        if (!btn) return;
+        const tag = btn.dataset.tag;
+        legend.querySelectorAll('.legend-item')
+          .forEach(b => b.classList.toggle('active', b === btn));
+
+        const cards = document.querySelectorAll('.card');
+        if (tag === 'all') {
+          cards.forEach(c => c.classList.remove('raise', 'lower'));
+          return;
+        }
+        cards.forEach(c => {
+          const has = (c.dataset.tags || '').split(',')
+            .map(s => s.trim()).includes(tag);
+          c.classList.toggle('raise', has);
+          c.classList.toggle('lower', !has);
+        });
+
+      });
+
+      // expose globally for script.js
+      window.__setCardTags = setCardTags;
+    })();
+  </script>
+
+  <script>
+    (function () {
+      const collage = document.querySelector('.collage');
+      if (!collage) return; // 只在有画廊的页运行（写作/关于页自动跳过）
+
+      // 可调参数
+      const MIN_CELL = 10;          // 最小矩形尺寸（像素）
+      const MAX_DEPTH = 10          // 递归深度上限
+      const STOP_CHANCE = 0.05;     // 提前停止的随机概率（0~1）
+      const STROKE = 'rgba(0,0,0,0.01）';
+      const STROKE_WIDTH = 100;     // 线宽
+
+
+      const svgNS = 'http://www.w3.org/2000/svg';
+      const svg = document.createElementNS(svgNS, 'svg');
+      svg.classList.add('bg-grid');
+      svg.setAttribute('width', '100%');
+      svg.setAttribute('height', '100%');
+      collage.prepend(svg);  // 放到最前，位于卡片下方
+
+      function randBetween(a, b) { return a + Math.random() * (b - a); }
+
+      function addRect(x, y, w, h) {
+        const r = document.createElementNS(svgNS, 'rect');
+        r.setAttribute('x', x.toFixed(1));
+        r.setAttribute('y', y.toFixed(1));
+        r.setAttribute('width', w.toFixed(1));
+        r.setAttribute('height', h.toFixed(1));
+        r.setAttribute('fill', 'transparent');   // 背景色保持不变
+        // 随机五颜六色
+        const colors = [
+          '#FFFFFF', '#F2F2F2', '#D9D9D9', '#BFBFBF',
+          '#999999', '#666666', '#333333', '#000000'
+        ];
+        const randomColor = colors[Math.floor(Math.random() * colors.length)];
+        r.setAttribute('stroke', randomColor + '06'); // 10% opacity
+        r.setAttribute('stroke-width', STROKE_WIDTH);
+        svg.appendChild(r);
+      }
+
+      function subdivide(x, y, w, h, depth) {
+        // 到达停止条件 → 画一个格子
+        if (w < 2 * MIN_CELL || h < 2 * MIN_CELL || depth >= MAX_DEPTH || Math.random() < STOP_CHANCE) {
+          addRect(x, y, w, h);
+          return;
+        }
+        // 选择纵切或横切（略偏向长边方向）
+        const vertical = (w > h) ? true : (w < h ? false : Math.random() < 0.5);
+        if (vertical) {
+          // 切分点在 35% ~ 65% 之间，避免“极细条”
+          const s = randBetween(x + w * 0.35, x + w * 0.65);
+          subdivide(x, y, s - x, h, depth + 1);
+          subdivide(s, y, x + w - s, h, depth + 1);
+        } else {
+          const s = randBetween(y + h * 0.35, y + h * 0.65);
+          subdivide(x, y, w, s - y, depth + 1);
+          subdivide(x, s, w, y + h - s, depth + 1);
+        }
+      }
+
+      function build() {
+        // 清空并按当前尺寸重建
+        while (svg.firstChild) svg.removeChild(svg.firstChild);
+        const rect = collage.getBoundingClientRect();
+        svg.setAttribute('viewBox', `-200 -200 ${rect.width + 400} ${rect.height + 400}`);
+        subdivide(-200, -200, rect.width + 400, rect.height + 400, 0);
+
+      }
+
+      // 防抖的 resize 以适配窗口大小变化
+      function debounce(fn, ms) { let t; return () => { clearTimeout(t); t = setTimeout(fn, ms); }; }
+
+      build();
+      window.addEventListener('resize', debounce(build, 200));
+    })();
+  </script>
+
+  <script>
+    (function () {
+      const collage = document.querySelector('.collage');
+      const legend = document.getElementById('legend');
+
+      /* 你的小圆点用到的同一套色板（十六进制） */
+      const TAG_COLORS = {
+        concept: '#ff7fb5',  // 粉
+        world: '#ff4d4f',  // 红
+        story: '#ffa940',  // 橙
+        architectural: '#ffd666',  // 黄
+        interactive: '#2f7d57',  // 绿
+        computation: '#1890ff',  // 蓝
+        data: '#9254de',  // 紫
+        ai: '#bfbfbf',  // 灰
+      };
+
+      function hexToRgba(hex, alpha, desaturate = 0.4) {
+        // desaturate = 0 表示原色，1 表示完全灰
+        const m = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+        if (!m) return `rgba(255,255,255,${alpha})`;
+        let r = parseInt(m[1], 16), g = parseInt(m[2], 16), b = parseInt(m[3], 16);
+
+        // 转成灰度值（平均值）
+        const avg = (r + g + b) / 3;
+        // 混合原色与灰度 → 减少饱和度
+        r = r + (avg - r) * desaturate;
+        g = g + (avg - g) * desaturate;
+        b = b + (avg - b) * desaturate;
+
+        return `rgba(${r.toFixed(0)},${g.toFixed(0)},${b.toFixed(0)},${alpha})`;
+      }
+
+
+      function applyCaptionGradient(card, tags, alpha = 0.3) {
+        const cap = card.querySelector('.caption');
+        if (!cap) return;
+
+        // 取前 2~3 个标签配色生成渐变（避免太杂乱）
+        const colors = [...new Set(tags)]
+          .map(t => TAG_COLORS[t])
+          .filter(Boolean)
+          .slice(0, 3)
+          .map(c => hexToRgba(c, alpha));
+
+        if (colors.length === 0) {
+          cap.style.background = `rgba(255,255,255,${alpha})`; // 无 tag 兜底
+        } else if (colors.length === 1) {
+          cap.style.background = colors[0];
+        } else {
+          cap.style.background = `linear-gradient(135deg, ${colors.join(', ')})`;
+        }
+      }
+
+      function setCardTags(card, tags) {
+        card.dataset.tags = tags.join(',');
+
+        // —— 渲染右下角小色点（保持你原逻辑）
+        let holder = card.querySelector('.tags');
+        if (!holder) {
+          holder = document.createElement('div');
+          holder.className = 'tags';
+          card.querySelector('.frame').appendChild(holder);
+        } else {
+          holder.innerHTML = '';
+        }
+        tags.forEach(t => {
+          const span = document.createElement('span');
+          span.className = 'tag-dot ' + ({
+            concept: 'pink',
+            world: 'red',
+            story: 'orange',
+            architectural: 'yellow',
+            interactive: 'green',
+            computation: 'blue',
+            data: 'purple',
+            ai: 'gray'
+          }[t] || 'gray');
+          holder.appendChild(span);
+        });
+
+        // —— 新增：根据 tags 给 caption 上渐变背景（透明度默认 0.3）
+        applyCaptionGradient(card, tags, 0.3);
+      }
+
+      // 你的 legend 点击逻辑保持不变……
+      legend?.addEventListener('click', (e) => {
+        const btn = e.target.closest('.legend-item');
+        if (!btn) return;
+        const tag = btn.dataset.tag;
+        legend.querySelectorAll('.legend-item')
+          .forEach(b => b.classList.toggle('active', b === btn));
+
+        const cards = document.querySelectorAll('.card');
+        if (tag === 'all') {
+          cards.forEach(c => c.classList.remove('raise', 'lower'));
+          return;
+        }
+        cards.forEach(c => {
+          const has = (c.dataset.tags || '').split(',').map(s => s.trim()).includes(tag);
+          c.classList.toggle('raise', has);
+          c.classList.toggle('lower', !has);
+        });
+      });
+
+      // 暴露给 script.js 使用（你 mount 时已经在用）
+      window.__setCardTags = setCardTags;
+    })();
+  </script>
+
+<div id="portrait-overlay">
+  <div class="portrait-message">
+    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M12 2v8m-6 6h12m-9 6h6m-3-3v3"/>
+      <rect x="4" y="4" width="16" height="16" rx="2"/>
+    </svg>
+    <p>Please rotate your device to landscape<br>for the best experience</p>
+  </div>
+</div>
+
+
+</body>
+
+</html>
