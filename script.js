@@ -9,13 +9,13 @@ const items = [
   { src: 'assets/img04.png', caption: 'Lighting Design', x: 70, y: 20, w: 220, rot: 0, tags: ['interactive'], link: 'projects/project-04.html' },
   { src: 'assets/img05.png', caption: 'AR Hololens', x: 85, y: 26, w: 210, rot: 0, tags: ['interactive', 'computation'], link: 'projects/project-05.html' },
 
-  // 第二排（中间）
+    // 第二排（中间）
   { src: 'assets/img06.png', caption: 'Ceramic', x: 22, y: 45, w: 230, rot: 0, tags: ['story'], link: 'projects/project-06.html' },
-  { src: 'assets/img07.png', caption: "Conceptual Architecture", x: 40, y: 48, w: 220, rot: 0, tags: ['concept', 'architectural'], link: 'projects/project-07.html' },
-  { src: 'assets/img08.png', caption: 'Asymmetry Analysis', x: 58, y: 44, w: 240, rot: 0, tags: ['concept', 'architectural'], link: 'projects/project-08.html' },
+  { src: 'assets/img07.png', caption: "Conceptual Architecture", x: 36, y: 48, w: 220, rot: 0, tags: ['concept', 'architectural'], link: 'projects/project-07.html' },
+  { src: 'assets/img17.png', caption: 'Procedural Topo Generator', x: 47, y: 52, w: 240, rot: 0, tags: ['computation', 'ai', 'world'], link: 'projects/project-17.html' },
+  { src: 'assets/img08.png', caption: 'Asymmetry Analysis', x: 62, y: 44, w: 240, rot: 0, tags: ['concept', 'architectural'], link: 'projects/project-08.html' },
   { src: 'assets/img09.png', caption: 'Data Analysis', x: 76, y: 50, w: 220, rot: 0, tags: ['computation', 'data'], link: 'projects/439-Final-Report.html' },
   { src: 'assets/img10.png', caption: 'Data Analysis', x: 88, y: 42, w: 210, rot: 0, tags: ['computation', 'data'], link: 'projects/Chicago_Skyscraper_Data_Analysis.html' },
-
   // 第三排（略低）
   { src: 'assets/img11.png', caption: 'Unity Game', x: 17, y: 70, w: 220, rot: 0, tags: ['computation', 'interactive'], link: 'https://ewwustl.itch.io/hamstergo' },
   { src: 'assets/img12.png', caption: 'Conceptual Architecture', x: 35, y: 75, w: 230, rot: 0, tags: ['concept', 'story'], link: 'projects/project-12.html' },
@@ -82,7 +82,7 @@ function mount() {
       });
     }
 
-    
+
 
     // 标签小圆点
     // === 单击打开链接 + 拖拽防冲突 ===
