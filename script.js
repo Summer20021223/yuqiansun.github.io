@@ -1,4 +1,4 @@
-// script.js  —— 15-card layout (drop-in replacement)
+ // script.js  —— 15-card layout (drop-in replacement)
 
 // 1) 每个对象是一张卡片：src(图片)、caption(标题)、x/y(百分比位置)、w(像素宽度)、rot(旋转角度，可先保持0)
 const items = [
@@ -22,6 +22,8 @@ const items = [
   { src: 'assets/img13.png', caption: 'Physical Model', x: 55, y: 73, w: 230, rot: 0, tags: ['concept', 'story', 'world'], link: 'projects/project-13.html' },
   { src: 'assets/img14.png', caption: 'Interactive Space', x: 73, y: 78, w: 240, rot: 0, tags: ['interactive'], link: 'projects/project-14.html' },
   { src: 'assets/img15.png', caption: 'Structure Analysis', x: 90, y: 66, w: 210, rot: 0, tags: ['architectural'], link: 'projects/project-15.html' },
+    // 第四排（新增单张小卡片）
+  { src: 'assets/img18.png', caption: 'Computational Fold/Unfold', x: 26, y: 96, w: 240, rot: 0, tags: ['computation'], link: 'projects/project-18.html' },
 ];
 
 

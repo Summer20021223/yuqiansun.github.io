@@ -326,7 +326,7 @@ body.filter-active .card:not(.raise):not(.dragging) {
   left: calc(-200 / var(--base) * 100vw);
   top: calc(-200 / var(--base) * 100vw);
   width: calc(100% + calc(400 / var(--base) * 100vw));
-  height: calc(100% + calc(400 / var(--base) * 100vw));
+  height: calc(100% + calc(400 / var(--base) * 100vw));  
 }
 
 /* ======================  ABOUT PAGE  ====================== */
@@ -585,6 +585,8 @@ body.project-15 .process-grid figure {
   border: none !important;
   background: none !important;
 }
+
+
 
 /* ===== 手机端优化：放大关键元素 ===== */
 @media (max-width: 800px) {
