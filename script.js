@@ -24,6 +24,8 @@ const items = [
   { src: 'assets/img15.png', caption: 'Structure Analysis', x: 90, y: 66, w: 210, rot: 0, tags: ['architectural'], link: 'projects/project-15.html' },
     // 第四排（新增单张小卡片）
   { src: 'assets/img18.png', caption: 'Computational Fold/Unfold', x: 26, y: 96, w: 240, rot: 0, tags: ['computation'], link: 'projects/project-18.html' },
+  { src: 'assets/img19.png', caption: 'AI Re-texture', x: 45, y: 98, w: 230, rot: 0, tags: ['ai', 'computation'], link: 'projects/project-19.html' },
+
 ];
 
 
