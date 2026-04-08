@@ -328,7 +328,7 @@ body.filter-active .card:not(.raise):not(.dragging) {
   overflow: hidden;
   left: calc(-200 / var(--base) * 100vw);
   top: calc(-200 / var(--base) * 100vw);
-  width: calc(100% + 200px +calc(400 / var(--base) * 100vw));
+  width: calc(100% + calc(400 / var(--base) * 100vw));
   height: calc(100% + 200px + calc(400 / var(--base) * 100vw));  
 }
 
